@@ -4,9 +4,15 @@ from telemetrix_aio import telemetrix_aio
 
 board = telemetrix_aio.TelemetrixAIO()
 
-NUMBER_PINS = [11, 7, 4, 2, 1, 10, 5]
-SEGMENTS_PINS = [12, 9, 8, 6]
+# OUTPUT PINS IN ARDUINO FOR SEGMENTS: A, B, C, D, E, F, G
+# https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/7_Segment_Display_with_Labeled_Segments.svg/150px-7_Segment_Display_with_Labeled_Segments.svg.png
+SEGMENTS_PINS = [11, 7, 4, 2, 1, 10, 5]
 
+# OUTPUT PINS IN ARDUINO FOR SWITCH DIGIT: D1, D2, D3, D4
+# https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/LED_Digital_Display.jpg/220px-LED_Digital_Display.jpg
+DIGIT_PINS = [12, 9, 8, 6]
+
+# List of enabled segments (A, B, C, D, E, F, G) for each digit
 DIGIT_VALUES = {
     "0": [1, 1, 1, 1, 1, 1, 0],
     "1": [0, 1, 1, 0, 0, 0, 0],
@@ -22,7 +28,7 @@ DIGIT_VALUES = {
 
 
 async def select_segment(segment_index: int):
-    for idx, segment in enumerate(SEGMENTS_PINS):
+    for idx, segment in enumerate(DIGIT_PINS):
         value = 0 if idx == segment_index else 1
         await board.digital_write(segment, value)
 
@@ -32,7 +38,7 @@ async def display_digit(digit: int):
     digit_str = digit_str[0]
 
     for pin_index, pin_value in enumerate(DIGIT_VALUES[digit_str]):
-        await board.digital_write(NUMBER_PINS[pin_index], pin_value)
+        await board.digital_write(SEGMENTS_PINS[pin_index], pin_value)
 
 
 async def main() -> None:
